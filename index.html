@@ -1,0 +1,115 @@
+import React from "react";
+import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+
+const Home = () => (
+  <div className="p-6 text-center">
+    <h1 className="text-3xl font-bold">Bienvenue chez Boutique DM</h1>
+    <p className="mt-2 text-lg">Vêtements, accessoires, chaussures, ceintures et perruques.</p>
+    <Link to="/catalogue">
+      <Button className="mt-4">Voir le Catalogue</Button>
+    </Link>
+  </div>
+);
+
+const categories = [
+  { id: "vetements", name: "Vêtements" },
+  { id: "accessoires", name: "Accessoires" },
+  { id: "chaussures", name: "Chaussures" },
+  { id: "ceintures", name: "Ceintures" },
+  { id: "perruques", name: "Perruques" },
+];
+
+const products = {
+  vetements: [
+    { id: 1, name: "Robe Élégante", price: "$50", image: "https://via.placeholder.com/150" },
+  ],
+  accessoires: [
+    { id: 2, name: "Sac à main Luxe", price: "$90", image: "https://via.placeholder.com/150" },
+  ],
+  chaussures: [
+    { id: 3, name: "Chaussures Classiques", price: "$70", image: "https://via.placeholder.com/150" },
+  ],
+  ceintures: [],
+  perruques: [],
+};
+
+const Catalogue = () => (
+  <div className="p-6">
+    <h2 className="text-2xl font-bold">Catalogue</h2>
+    <div className="mt-4">
+      {categories.map((category) => (
+        <div key={category.id} className="mb-6">
+          <h3 className="text-xl font-semibold">{category.name}</h3>
+          <div className="grid grid-cols-2 gap-4 mt-2">
+            {products[category.id].map((product) => (
+              <Card key={product.id} className="p-2">
+                <img src={product.image} alt={product.name} className="w-full" />
+                <CardContent>
+                  <h3 className="text-lg font-semibold">{product.name}</h3>
+                  <p className="text-gray-600">{product.price}</p>
+                  <Button className="mt-2" onClick={() => addToCart(product)}>Ajouter au Panier</Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+const Commande = () => (
+  <div className="p-6 text-center">
+    <h2 className="text-2xl font-bold">Passer une commande</h2>
+    <p className="mt-2">Contactez-nous via WhatsApp : <strong>+243818562531</strong></p>
+    <p>Ou appelez-nous directement.</p>
+  </div>
+);
+
+const Cart = ({ cart }) => (
+  <div className="p-6">
+    <h2 className="text-2xl font-bold">Panier</h2>
+    {cart.length === 0 ? (
+      <p className="mt-2">Votre panier est vide.</p>
+    ) : (
+      <ul className="mt-4">
+        {cart.map((item, index) => (
+          <li key={index} className="flex justify-between border-b py-2">
+            {item.name} - {item.price}
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+);
+
+const App = () => {
+  const [cart, setCart] = React.useState([]);
+
+  const addToCart = (product) => {
+    setCart([...cart, product]);
+  };
+
+  return (
+    <Router>
+      <div className="p-4 text-center">
+        <nav className="mb-4">
+          <Link to="/" className="mr-4">Accueil</Link>
+          <Link to="/catalogue" className="mr-4">Catalogue</Link>
+          <Link to="/commande" className="mr-4">Commande</Link>
+          <Link to="/panier">Panier ({cart.length})</Link>
+        </nav>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/catalogue" element={<Catalogue />} />
+          <Route path="/commande" element={<Commande />} />
+          <Route path="/panier" element={<Cart cart={cart} />} />
+        </Routes>
+      </div>
+    </Router>
+  );
+};
+
+export default App;
